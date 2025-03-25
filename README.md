@@ -56,4 +56,25 @@ Navigate to:
 http://localhost:5000
 
 ```
+## 🧪 How to Use
+
+1. **Upload** your Swagger/OpenAPI specification file (`.json` or `.yaml`) on the homepage.
+2. **Enter** the API host or base URL (e.g., `https://api.example.com`).
+3. **Click** the **Upload** button. The system will automatically:
+   - Parse the file
+   - Extract and store all available endpoints
+   - Analyze parameters (path, query, body)
+4. **Explore and Test**:
+   - Use the interactive dashboard to send custom requests
+   - Filter and group endpoints
+   - Run massive tests across multiple endpoints with real-time feedback
+
+---
+
+## 🧰 Tech Stack
+
+- **Backend:** Flask, SQLAlchemy  
+- **Frontend:** Jinja2 templates, HTML, CSS (Apple-style UI)  
+- **Database:** PostgreSQL  
+- **Parsers:** YAML, JSON  
 
