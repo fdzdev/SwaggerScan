@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  title: Classic API Resource Documentation
+  title: Classic API Resource Documentation.
   description: A full featured API that requires basic authentication for interacting with Jamf Pro in a programmatic manner.
   termsOfService: 'https://www.jamf.com/developer-resources/api-license-agreement/'
   version: production
