@@ -1,0 +1,596 @@
+.results-summary {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.results-summary h3 {
+    text-align: center;
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* Force 5 columns */
+    gap: 20px;
+    padding: 10px;
+}
+
+.filter-btn {
+    background: #ffffff;
+    border: none;
+    border-radius: 18px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    min-width: 180px;
+    /* Ensure minimum width */
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.active {
+    transform: scale(1.02);
+}
+
+.count-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1d1d1f;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.5px;
+}
+
+.count-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #86868b;
+    text-transform: none;
+    letter-spacing: -0.2px;
+}
+
+/* Button variants with subtle gradients */
+.filter-btn.all {
+    background: linear-gradient(145deg, #f2f2f7, #ffffff);
+}
+
+.filter-btn.completed {
+    background: linear-gradient(145deg, #e8f7ff, #ffffff);
+}
+
+.filter-btn.successful {
+    background: linear-gradient(145deg, #e8fff0, #ffffff);
+}
+
+.filter-btn.failed {
+    background: linear-gradient(145deg, #fff0f0, #ffffff);
+}
+
+.filter-btn.attention {
+    background: linear-gradient(145deg, #fff9e6, #ffffff);
+}
+
+/* Active states with more pronounced colors */
+.filter-btn.all.active {
+    background: linear-gradient(145deg, #f2f2f7, #e5e5ea);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.filter-btn.completed.active {
+    background: linear-gradient(145deg, #0071e3, #0077ed);
+    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+}
+
+.filter-btn.completed.active .count-value,
+.filter-btn.completed.active .count-label {
+    color: #ffffff;
+}
+
+.filter-btn.successful.active {
+    background: linear-gradient(145deg, #34c759, #30db5b);
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
+}
+
+.filter-btn.successful.active .count-value,
+.filter-btn.successful.active .count-label {
+    color: #ffffff;
+}
+
+.filter-btn.failed.active {
+    background: linear-gradient(145deg, #ff3b30, #ff453a);
+    box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+}
+
+.filter-btn.failed.active .count-value,
+.filter-btn.failed.active .count-label {
+    color: #ffffff;
+}
+
+.filter-btn.attention.active {
+    background: linear-gradient(145deg, #ff9500, #ffa426);
+    box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+}
+
+.filter-btn.attention.active .count-value,
+.filter-btn.attention.active .count-label {
+    color: #ffffff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .count-value {
+        font-size: 28px;
+    }
+
+    .count-label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Details styling */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.detail-label {
+    display: block;
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.detail-value {
+    display: block;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.detail-value.url {
+    color: #0056b3;
+}
+
+.detail-value.status-code {
+    font-weight: bold;
+}
+
+.detail-value.status-code.attention {
+    color: #dc3545;
+}
+
+.error-container {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.response-container {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.response {
+    background: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #dee2e6;
+    overflow-x: auto;
+    max-height: 300px;
+}
+
+/* Test Configuration Styling */
+.parameter-inputs {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.parameter-inputs h2 {
+    color: #1d1d1f;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.5px;
+}
+
+.parameter-inputs h3 {
+    color: #1d1d1f;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+}
+
+.parameter-input {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+    gap: 12px;
+}
+
+.parameter-input label {
+    color: #86868b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: right;
+}
+
+.parameter-input input {
+    background: #f5f5f7;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #1d1d1f;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+}
+
+.parameter-input input:focus {
+    background: #ffffff;
+    border-color: #0071e3;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.parameter-input input::placeholder {
+    color: #86868b;
+}
+
+/* Headers section styling */
+.headers-config,
+.body-config {
+    margin-top: 24px;
+}
+
+.headers-config h3,
+.body-config h3 {
+    color: #1d1d1f;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    background: #f5f5f7;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #1d1d1f;
+    resize: vertical;
+    transition: all 0.2s ease;
+}
+
+textarea:focus {
+    background: #ffffff;
+    border-color: #0071e3;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.run-tests-btn {
+    background: #0071e3;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 24px;
+}
+
+.run-tests-btn:hover {
+    background: #0077ed;
+    transform: translateY(-1px);
+}
+
+.run-tests-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .parameter-input {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .parameter-input label {
+        text-align: left;
+    }
+
+    .parameter-input input {
+        max-width: none;
+    }
+}
+
+/* Add these to your existing CSS */
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    border-right: 1px solid #d2d2d7;
+    overflow-y: auto;
+    background: #f5f5f7;
+    padding: 20px;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #fff;
+}
+
+.panel-section {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.config-section {
+    margin-bottom: 24px;
+}
+
+.config-textarea {
+    width: 100%;
+    min-height: 120px;
+    font-family: monospace;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d2d2d7;
+    background: #f5f5f7;
+}
+
+.endpoint-group {
+    margin-bottom: 20px;
+}
+
+.endpoint-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.endpoint-item:hover {
+    background: #e8e8ed;
+}
+
+.method {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.method.get {
+    background: #e3f2fd;
+    color: #0d47a1;
+}
+
+.method.post {
+    background: #e8f5e9;
+    color: #1b5e20;
+}
+
+.method.put {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.method.delete {
+    background: #ffebee;
+    color: #b71c1c;
+}
+
+.method.patch {
+    background: #f3e5f5;
+    color: #4a148c;
+}
+
+.path {
+    font-size: 14px;
+    color: #1d1d1f;
+    flex: 1;
+}
+
+.control-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 16px;
+    margin: -20px -20px 20px -20px;
+    border-bottom: 1px solid #d2d2d7;
+    display: flex;
+    gap: 12px;
+}
+
+.control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.control-btn .icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.control-btn.run {
+    background: #0071e3;
+    color: white;
+}
+
+.control-btn.run:hover {
+    background: #0077ed;
+}
+
+.control-btn.stop {
+    background: #ff3b30;
+    color: white;
+}
+
+.control-btn.stop:hover {
+    background: #ff453a;
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.control-btn.fill {
+    background: #34c759;
+    color: white;
+}
+
+.control-btn.fill:hover {
+    background: #30db5b;
+}
+
+/* Move the existing run button out since we have it in the control bar now */
+.run-tests-btn {
+    display: none;
+}
+
+.endpoint-result {
+    transition: all 0.3s ease;
+    margin-bottom: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.endpoint-result[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(-10px);
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.endpoint-result[style*="display: block"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.status.success {
+    background: #e8fff0;
+    color: #28a745;
+}
+
+.status.failed {
+    background: #fff0f0;
+    color: #dc3545;
+}
+
+.needs-attention .status {
+    background: #fff9e6;
+    color: #ffc107;
+}
+
+.endpoint-header {
+    padding: 12px;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.endpoint-header:hover {
+    background: #e9ecef;
+}
+
+.endpoint-details {
+    padding: 16px;
+    border-top: 1px solid #e9ecef;
+}

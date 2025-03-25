@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>API Endpoints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <h1>Parsed API Endpoints</h1>
+    <table class="api-table">
+        <thead>
+            <tr>
+                <th>Scheme</th>
+                <th>Method</th>
+                <th>Server/BasePath</th>
+                <th>Path</th>
+                <th>Status Codes</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ep in endpoints %}
+            <tr>
+                <td>{{ ep.scheme }}</td>
+                <td>{{ ep.method }}</td>
+                <td>{{ ep.server }}</td>
+                <td>{{ ep.path }}</td>
+                <td>{{ ep.status_codes }}</td>
+                <td>{{ ep.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="{{ url_for('index') }}">Upload Another File</a>
+</body>
+
+</html>

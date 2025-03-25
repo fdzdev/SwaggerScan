@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Massive API Testing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/massive_test.css') }}">
+</head>
+<style>
+    .documentation-selector {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: var(--card-background);
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .documentation-selector select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .header-container {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .documentation-selector {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .documentation-selector h2 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #1d1d1f;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .select-wrapper {
+        position: relative;
+        flex-grow: 1;
+        max-width: 500px;
+    }
+
+    .select-wrapper::after {
+        content: '▼';
+        font-size: 0.8em;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #86868b;
+        pointer-events: none;
+    }
+
+    #docSelector {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        border: 1px solid #d2d2d7;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1d1d1f;
+        appearance: none;
+        transition: all 0.2s ease;
+    }
+
+    #docSelector:hover {
+        border-color: #86868b;
+    }
+
+    #docSelector:focus {
+        outline: none;
+        border-color: #0071e3;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+    }
+
+    #docSelector option {
+        padding: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .documentation-selector {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        .documentation-selector h2 {
+            font-size: 1.1rem;
+        }
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .progress-indicator {
+        height: 100%;
+        background-color: #4CAF50;
+        transition: width 0.3s ease-in-out;
+    }
+</style>
+
+<body>
+    <div class="header-container">
+        <div class="documentation-selector">
+            <h2>API Documentation Explorer</h2>
+            <div class="select-wrapper">
+                <select id="docSelector" onchange="changeDocumentation(this.value)">
+                    <option value="" disabled selected>Select an API Documentation</option>
+                    {% for doc in documentations %}
+                    <option value="{{ doc.id }}" {% if doc.id==selected_doc_id %}selected{% endif %}>
+                        {{ doc.name }} ({{ doc.host }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Endpoints by Group</h2>
+            <div class="endpoint-groups">
+                {% for group, endpoints in grouped_endpoints.items() %}
+                <div class="endpoint-group">
+                    <h3>{{ group }}</h3>
+                    {% for ep in endpoints %}
+                    <div class="endpoint-item" data-method="{{ ep.method }}" data-path="{{ ep.path }}">
+                        <span class="method {{ ep.method.lower() }}">{{ ep.method }}</span>
+                        <span class="path">{{ ep.path }}</span>
+
+                        <!-- Add parameter indicators -->
+                        {% if ep.path_params %}
+                        <div class="params-info">
+                            <span class="param-type">Path Params: {{ ep.path_params|length }}</span>
+                        </div>
+                        {% endif %}
+                        {% if ep.query_params %}
+                        <div class="params-info">
+                            <span class="param-type">Query Params: {{ ep.query_params|length }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="test-config-panel">
+                <h2>Test Configuration</h2>
+                <div class="config-section">
+                    <h3>Path Parameter</h3>
+                    <div id="parameter-inputs"></div>
+                </div>
+                <div class="config-section">
+                    <h3>Query Parameters</h3>
+                    <div id="query-parameter-inputs"></div>
+                </div>
+                <div class="config-section">
+                    <h3>Headers</h3>
+                    <textarea id="headers-config" placeholder="Enter headers in JSON format">
+                    {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer your_token_here"
+                    }</textarea>
+                </div>
+
+                <div class="config-section">
+                    <h3>Request Body Template (for POST/PUT/PATCH)</h3>
+                    <textarea id="body-config" placeholder="Enter default request body">
+                    {
+                        "name": "test_name",
+                        "description": "test_description"
+                    }</textarea>
+                </div>
+
+                <div class="control-bar">
+                    <button onclick="runMassiveTest()" class="control-btn run" id="run-btn">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        Run All Tests
+                    </button>
+                    <button onclick="stopTests()" class="control-btn stop" id="stop-btn" disabled>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M6 6h12v12H6z" />
+                        </svg>
+                        Stop Tests
+                    </button>
+                    <button onclick="fillRandomValues()" class="control-btn fill">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
+                        </svg>
+                        Fill Random
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-panel">
+                <h2>Test Results</h2>
+                <div class="results-summary" id="results-summary"></div>
+                <div class="results-details" id="results-details"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function changeDocumentation(docId) {
+            window.location.href = `/massive_test?doc_id=${docId}`;
+        }
+
+        function updateParameterInputs(endpoint) {
+            // Update path parameters
+            const pathParamDiv = document.getElementById('path-parameter-inputs');
+            pathParamDiv.innerHTML = '';
+
+            if (endpoint.path_params) {
+                endpoint.path_params.forEach(param => {
+                    pathParamDiv.innerHTML += `
+                        <div class="parameter-input">
+                            <label>${param.name} ${param.required ? '*' : ''}</label>
+                            <input type="text" 
+                                   data-param-name="${param.name}"
+                                   data-param-type="path"
+                                   placeholder="${param.description || ''}"
+                                   ${param.required ? 'required' : ''}>
+                        </div>
+                    `;
+                });
+            }
+
+            // Update query parameters
+            const queryParamDiv = document.getElementById('query-parameter-inputs');
+            queryParamDiv.innerHTML = '';
+
+            if (endpoint.query_params) {
+                endpoint.query_params.forEach(param => {
+                    queryParamDiv.innerHTML += `
+                        <div class="parameter-input">
+                            <label>${param.name} ${param.required ? '*' : ''}</label>
+                            <input type="text" 
+                                   data-param-name="${param.name}"
+                                   data-param-type="query"
+                                   placeholder="${param.description || ''}"
+                                   ${param.required ? 'required' : ''}>
+                        </div>
+                    `;
+                });
+            }
+        }
+        function testEndpoint(endpointId) {
+            const endpoint = document.querySelector(`[data-endpoint-id="${endpointId}"]`);
+
+            // Collect path parameters
+            const pathParams = Array.from(endpoint.querySelectorAll('.path-param')).map(input => ({
+                name: input.dataset.paramName,
+                value: input.value
+            }));
+
+            // Collect query parameters
+            const queryParams = Array.from(endpoint.querySelectorAll('.query-param')).map(input => ({
+                name: input.dataset.paramName,
+                value: input.value
+            }));
+
+            // Get headers
+            let headers = {};
+            try {
+                const headersInput = endpoint.querySelector('.headers-input');
+                if (headersInput && headersInput.value) {
+                    headers = JSON.parse(headersInput.value);
+                }
+            } catch (e) {
+                console.error('Error parsing headers:', e);
+            }
+
+            // Get body
+            let body = null;
+            try {
+                const bodyInput = endpoint.querySelector('.body-input');
+                if (bodyInput && bodyInput.value) {
+                    body = JSON.parse(bodyInput.value);
+                }
+            } catch (e) {
+                console.error('Error parsing body:', e);
+            }
+
+            // Show loading state
+            const resultDiv = endpoint.querySelector('.test-results');
+            resultDiv.innerHTML = 'Testing...';
+
+            // Make the test request
+            fetch('/test_endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    endpoint_id: endpointId,
+                    path_params: pathParams,
+                    query_params: queryParams,
+                    headers: headers,
+                    body: body
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    resultDiv.innerHTML = `
+            <h4>Test Results</h4>
+            <div class="result-item">
+                <strong>Status:</strong> ${data.status}
+            </div>
+            <div class="result-item">
+                <strong>Headers:</strong>
+                <pre>${JSON.stringify(data.headers, null, 2)}</pre>
+            </div>
+            <div class="result-item">
+                <strong>Body:</strong>
+                <pre>${typeof data.body === 'string' ? data.body : JSON.stringify(data.body, null, 2)}</pre>
+            </div>
+        `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+                });
+        }
+
+        // Update your existing click handler to include query parameters
+        document.querySelectorAll('.endpoint-item').forEach(item => {
+            item.addEventListener('click', function () {
+                // Find the endpoint data from the grouped_endpoints
+                const method = this.dataset.method;
+                const path = this.dataset.path;
+
+                // Add data attributes for parameters
+                const pathParams = JSON.parse(this.dataset.pathParams || '[]');
+                const queryParams = JSON.parse(this.dataset.queryParams || '[]');
+
+                const endpoint = {
+                    method: method,
+                    path: path,
+                    path_params: pathParams,
+                    query_params: queryParams
+                };
+                updateParameterInputs(endpoint);
+            });
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='js/massive_test.js') }}"></script>
+</body>
+
+</html>

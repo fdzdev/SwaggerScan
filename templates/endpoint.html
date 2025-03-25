@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Endpoints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>API Endpoints</h2>
+            <div class="endpoint-list">
+                {% for ep in endpoints %}
+                <!-- Replace this section -->
+                <div class="endpoint-item" data-method="{{ ep.method }}" data-server="{{ ep.server }}"
+                    data-path="{{ ep.path }}">
+                    <span class="method {{ ep.method.lower() }}">{{ ep.method }}</span>
+                    <span class="path">{{ ep.path }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="request-panel">
+                <h3>Request</h3>
+                <div class="request-url">
+                    <select id="method">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url" placeholder="URL" style="flex: 1;">
+                </div>
+                <div class="request-headers">
+                    <h4>Headers</h4>
+                    <textarea id="headers" placeholder="Enter headers in JSON format"></textarea>
+                </div>
+                <div class="request-body">
+                    <h4>Body</h4>
+                    <textarea id="body" placeholder="Enter request body"></textarea>
+                </div>
+                <button onclick="sendRequest()">Send Request</button>
+            </div>
+
+            <div class="response-panel">
+                <h3>Response</h3>
+                <pre id="response"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
