@@ -7,15 +7,16 @@
 ## 📸 Screenshots
 
 ### 1. Upload Spec and Set API Target
-![Select File and Host](https://github.com/fdzdev/SwaggerScan/screenshots/select.png)
+![Select File and Host](https://github.com/fdzdev/SwaggerScan/blob/main/screenshots/select.png)
 
 ### 2. Successful Upload and Parsing
-![Upload Success](https://github.com/fdzdev/SwaggerScan/screenshots/success.png)
+![Upload Success](https://github.com/fdzdev/SwaggerScan/blob/main/screenshots/success.png)
 
 ### 3. Explore & Test Endpoints
-![Main Dashboard](https://github.com/fdzdev/SwaggerScan/screenshots/main.png)
+![Main Dashboard](https://github.com/fdzdev/SwaggerScan/blob/main/screenshots/main.png)
 
 ---
+
 
 ## ⚙️ Features
 
